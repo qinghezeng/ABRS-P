@@ -17,4 +17,4 @@ OS: Linux (Tested on Ubuntu 18.04)
 [Tutorial](docs/tutorial.md)
 
 
-These codes are partly based on [CLAM](https://github.com/mahmoodlab/CLAM) and [Meylan et al. 2022](https://github.com/maximemeylan/Meylan_et_al_2022).
+These codes are partially based on [CLAM](https://github.com/mahmoodlab/CLAM) and [Meylan et al. 2022](https://github.com/maximemeylan/Meylan_et_al_2022).
