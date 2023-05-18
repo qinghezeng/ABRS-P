@@ -9,13 +9,6 @@ import argparse
 from utils.utils import collate_features
 import h5py
 import openslide
-import torchvision
-from models.RetCCL.ccl import CCL
-import models.RetCCL.ResNet as ResNet
-import models.TransPath.moco.builder_infence
-import models.TransPath.vits
-from functools import partial
-from models.TransPath.byol_pytorch.byol_pytorch_get_feature import BYOL
 from models.TransPath.ctran import ctranspath
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
@@ -155,58 +148,10 @@ if __name__ == '__main__':
                 return x
         model.fc = Identity()
 
-    elif args.model == "resnet18-simclr-histo":
-        model = torchvision.models.__dict__['resnet18'](pretrained=False)
-        state = torch.load('models/simclr/pytorchnative_tenpercent_resnet18.ckpt', map_location='cpu')
-        state_dict = state['state_dict']
-        for key in list(state_dict.keys()):
-            state_dict[key.replace('model.', '').replace('resnet.', '')] = state_dict.pop(key)
-        model_dict = model.state_dict()
-        state_dict = {k: v for k, v in state_dict.items() if k in model_dict}
-        if state_dict == {}:
-            print('No weight could be loaded..')
-        model_dict.update(state_dict)
-        model.load_state_dict(model_dict)
-        model.fc = torch.nn.Sequential()
-
-    elif args.model == "retccl":
-        backbone = ResNet.resnet50
-        model = CCL(backbone, 128, 65536, mlp=True, two_branch=True, normlinear=True).cuda()
-
-        pretext_model = torch.load('./models/RetCCL/best_ckpt.pth', map_location='cpu')
-        model.load_state_dict(pretext_model, strict=True)
-        model.encoder_q.fc = nn.Identity()
-        model.encoder_q.instDis = nn.Identity()
-        model.encoder_q.groupDis = nn.Identity()
-
-    elif args.model == "vit-small-tcga-paip-mocov3":
-        model = models.TransPath.moco.builder_infence.MoCo_ViT(
-            partial(models.TransPath.vits.__dict__['vit_small'], stop_grad_conv1=True))
-    
-        pretext_model = torch.load('./models/TransPath/vit_small.pth.tar', map_location='cpu')
-        from collections import OrderedDict as OD
-        model.load_state_dict(OD([(key.split("module.")[-1], pretext_model['state_dict'][key]) for key in pretext_model['state_dict']]), strict=True)
-    
-    elif args.model == "vit-conv-small-tcga-paip-mocov3":
-        model = models.TransPath.moco.builder_infence.MoCo_ViT(
-            partial(models.TransPath.vits.__dict__['vit_conv_small'], stop_grad_conv1=True))
-    
-        pretext_model = torch.load('./models/TransPath/vit_small_conv.pth.tar', map_location='cpu')
-        from collections import OrderedDict as OD
-        model.load_state_dict(OD([(key.split("module.")[-1], pretext_model['state_dict'][key]) for key in pretext_model['state_dict']]), strict=True)
-
-    elif args.model == "transpath-tcga-paip-byol":
-        model = BYOL(image_size=256, hidden_layer='to_latent')
-        pretext_model = torch.load('./models/TransPath/TransPath.pth', map_location='cpu')
-        from collections import OrderedDict as OD
-        model.load_state_dict(OD([(key.split("module.")[-1], pretext_model[key]) for key in pretext_model]), strict=True)
-        
-        model.online_encoder.net.head = nn.Identity()
-
     elif args.model == "ctranspath-tcga-paip":
         model = ctranspath()
         model.head = nn.Identity()
-        td = torch.load('./models/TransPath/ctranspath.pth')
+        td = torch.load('./ctranspath.pth')
         model.load_state_dict(td['model'], strict=True)
             
     else:

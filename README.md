@@ -8,13 +8,23 @@ Biomarkers of sensitivity to targeted systemic therapies are key to improving th
   <img src="docs/workflow.png" width="400px" align="below" />
 </p>
 
-**More info**
+**Installation**
 
 OS: Linux (Tested on Ubuntu 18.04) 
 
-[Conda env](docs/ABRS-P.yml)
+Configure [conda env](docs/ABRS-P.yml) and 
+
+Install the modified [timm](https://drive.google.com/file/d/1JV7aj9rKqGedXY1TdDfi3dP07022hcgZ/view?usp=sharing) library
+```bash
+pip install timm-0.5.4.tar
+```
+
+Download [CTransPath](https://drive.google.com/file/d/1DoDx_70_TLj98gTf6YTXnu4tFhsFocDX/view?usp=sharing) to the main directory as frozen feature extractor
+
+
+**More info**
 
 [Tutorial](docs/tutorial.md)
 
 
-These codes are partially based on [CLAM](https://github.com/mahmoodlab/CLAM) and [Meylan et al. 2022](https://github.com/maximemeylan/Meylan_et_al_2022).
+These codes are partially based on [CLAM](https://github.com/mahmoodlab/CLAM), [CTransPath](https://github.com/Xiyue-Wang/TransPath) and [Meylan et al. 2022](https://github.com/maximemeylan/Meylan_et_al_2022).
