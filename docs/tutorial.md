@@ -354,7 +354,7 @@ CUDA_VISIBLE_DEVICES=0 python eval_reg.py \
 
 Use maj-voting_with_thresholds.py to generate majority-voting predictions from the 10 folds (with biopsy-157 thresholds from calculate_median_reg.ipynb)
 
-## Validate on Visium spatial transcriptomics (ST)
+## *In-situ* validation on Visium Spatial Transcriptomics (ST)
 ***- Process counts from Visium SpaceRanger***
 
 script process_st_hcc4.R, line 1-59
