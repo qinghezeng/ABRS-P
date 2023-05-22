@@ -55,7 +55,8 @@ parser.add_argument('--micro_average', action='store_true', default=False,
 parser.add_argument('--split', type=str, choices=['train', 'val', 'test', 'all'], default='test')
 parser.add_argument('--task', type=str, choices=['mo-reg_tcga_hcc_349_ABRS-score_exp_cv_622',
                                                  'mo-reg_mondorS2_hcc_225_ABRS-score_exp_cv_00X',
-                                                 'mo-reg_mondor-biopsy_hcc_157_ABRS-score_exp_cv_00X'],
+                                                 'mo-reg_mondor-biopsy_hcc_157_ABRS-score_exp_cv_00X',
+                                                 'mo-reg_st_hcc_4_ABRS-score_cv_00X'],
                     help='indentifier for the experimental settings, see the source code for complete list')
 
 parser.add_argument('--feature_bags', type=str, nargs='+', default=None, 
@@ -128,6 +129,18 @@ elif args.task == 'mo-reg_mondorS2_hcc_225_ABRS-score_exp_cv_00X':
 elif args.task == 'mo-reg_mondor-biopsy_hcc_157_ABRS-score_exp_cv_00X':
     args.n_classes=1
     dataset = Generic_MIL_Dataset(csv_path = 'dataset_csv/mondor-biopsy_hcc_157_ABRS-score_Exp.csv',
+                            data_dir= args.data_dir,
+                            concat_features = args.concat_features,
+                            shuffle = False, 
+                            print_info = True,
+                            label_dict = {},
+                            label_col = ["ABRS"],
+                            patient_strat= True,
+                            ignore=[])
+    
+elif args.task == 'mo-reg_st_hcc_4_ABRS-score_cv_00X':
+    args.n_classes=1
+    dataset = Generic_MIL_Dataset(csv_path = 'dataset_csv/st_hcc_4_ABRS-score_Exp.csv',
                             data_dir= args.data_dir,
                             concat_features = args.concat_features,
                             shuffle = False, 

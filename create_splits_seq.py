@@ -18,7 +18,8 @@ parser.add_argument('--task', type=str, choices=['mo-reg_tcga_hcc_349_ABRS-score
                                                  'mo-reg_merged-mondor-resection-biopsy_hcc_382_ABRS-score_exp_cv_00X',
                                                  
                                                  'mo-reg_ABtreated-biopsy_hcc_137_ABRS-score_cv_00X',
-                                                 'mo-reg_other-systemic-treatments_hcc_49_ABRS-score_cv_00X'],
+                                                 'mo-reg_other-systemic-treatments_hcc_49_ABRS-score_cv_00X',
+                                                 'mo-reg_st_hcc_4_ABRS-score_cv_00X'],
                     help='indentifier for the experimental settings, see the source code for complete list')
 
 args = parser.parse_args()
@@ -119,6 +120,21 @@ elif args.task == 'mo-reg_ABtreated-biopsy_hcc_137_ABRS-score_cv_00X':
 elif args.task == 'mo-reg_other-systemic-treatments_hcc_49_ABRS-score_cv_00X':
     from datasets.dataset_generic_reg import Generic_WSI_Classification_Dataset
     dataset = Generic_WSI_Classification_Dataset(csv_path = 'dataset_csv/other-systemic-treatments_hcc_49_ABRS-score_Exp.csv',
+                            shuffle = False, 
+                            seed = args.seed, 
+                            print_info = True,
+                            label_dict = {},
+                            label_col = ["ABRS"],
+                            patient_strat= True,
+                            ignore=[])
+    
+    num_slides_cls = len(dataset)
+    val_num = [0, 0]
+    test_num = num_slides_cls
+    
+elif args.task == 'mo-reg_st_hcc_4_ABRS-score_cv_00X':
+    from datasets.dataset_generic_reg import Generic_WSI_Classification_Dataset
+    dataset = Generic_WSI_Classification_Dataset(csv_path = 'dataset_csv/st_hcc_4_ABRS-score_Exp.csv',
                             shuffle = False, 
                             seed = args.seed, 
                             print_info = True,
