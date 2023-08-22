@@ -86,7 +86,7 @@ if __name__ == "__main__":
             patch_bags = [patches for patches in patch_bags if os.path.isfile(os.path.join(args.data_root_dir, patches))]
     
     save_dir = args.save_dir
-    save_dir = os.path.join(save_dir, f"ensembled-aver_weighted_pred_maps_{args.k}f_{args.downscale}_{args.norm}")
+    save_dir = os.path.join(save_dir, f"ensembled-aver_weighted_patch_pred_maps_{args.k}f_{args.downscale}_{args.norm}")
     os.makedirs(save_dir, exist_ok=True)
     
     total = len(patch_bags)
@@ -215,8 +215,8 @@ if __name__ == "__main__":
 
             assert df.shape[0] == arr_att.shape[0]
             df['weighted_pred_score'] = list(arr_att/args.k)
-            os.makedirs(os.path.join(args.save_dir, f"ensembled-aver_weighted_pred_scores_{args.k}f_{args.norm}"), exist_ok=True)
-            df.to_csv(os.path.join(args.save_dir, f"ensembled-aver_weighted_pred_scores_{args.k}f_{args.norm}", f"{os.path.splitext(patch_bags[i])[0]}_{br}.csv"),
+            os.makedirs(os.path.join(args.save_dir, f"ensembled-aver_weighted_patch_pred_scores_{args.k}f_{args.norm}"), exist_ok=True)
+            df.to_csv(os.path.join(args.save_dir, f"ensembled-aver_weighted_patch_pred_scores_{args.k}f_{args.norm}", f"{os.path.splitext(patch_bags[i])[0]}_{br}.csv"),
                       index=False)
             nor = [(x - np.min(arr_att)) / (np.max(arr_att) - np.min(arr_att)) for x in arr_att]
                 
