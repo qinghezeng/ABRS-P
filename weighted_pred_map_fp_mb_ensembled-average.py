@@ -165,10 +165,10 @@ if __name__ == "__main__":
             snapshot.save(os.path.join(save_dir, patch_bags[i].replace(".h5", "_snapshot.png")))
             
         if args.cpu:
-            att = torch.load(os.path.join(args.save_dir, "weighted_pred_scores_"+str(folds[0]), "patch_pred_score_"+
+            att = torch.load(os.path.join(args.save_dir, "weighted_patch_pred_scores_"+str(folds[0]), "weighted_patch_pred_score_"+ # use patch_pred_score_ if to plot patch prediction heatmap
                                           patch_bags[i].replace(".h5", ".pt")), map_location=lambda storage, loc: storage)
         else:
-            att = torch.load(os.path.join(args.save_dir, "weighted_pred_scores_"+str(folds[0]), "patch_pred_score_"+
+            att = torch.load(os.path.join(args.save_dir, "weighted_patch_pred_scores_"+str(folds[0]), "weighted_patch_pred_score_"+ # use patch_pred_score_ if to plot patch prediction heatmap
                                           patch_bags[i].replace(".h5", ".pt")), map_location=lambda storage, loc: storage.cuda(0))
         
         if args.brs is not None:
@@ -181,10 +181,10 @@ if __name__ == "__main__":
             del(att)
             for fold in folds:
                 if args.cpu:
-                    att = torch.load(os.path.join(args.save_dir, "weighted_pred_scores_"+str(fold), "patch_pred_score_"+
+                    att = torch.load(os.path.join(args.save_dir, "weighted_patch_pred_scores_"+str(fold), "weighted_patch_pred_score_"+ # use patch_pred_score_ if to plot patch prediction heatmap
                                                   patch_bags[i].replace(".h5", ".pt")), map_location=lambda storage, loc: storage)
                 else:
-                    att = torch.load(os.path.join(args.save_dir, "weighted_pred_scores_"+str(fold), "patch_pred_score_"+
+                    att = torch.load(os.path.join(args.save_dir, "weighted_patch_pred_scores_"+str(fold), "weighted_patch_pred_score_"+ # use patch_pred_score_ if to plot patch prediction heatmap
                                                   patch_bags[i].replace(".h5", ".pt")), map_location=lambda storage, loc: storage.cuda(0))
             
                 list_att = att.data.tolist()[br]

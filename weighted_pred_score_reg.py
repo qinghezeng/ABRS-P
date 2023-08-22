@@ -161,7 +161,7 @@ if __name__ == "__main__":
      
      for ckpt_idx in range(len(ckpt_paths)):
          save_dir = args.save_dir
-         save_dir = os.path.join(save_dir, "weighted_pred_scores_" + str(folds[ckpt_idx]))
+         save_dir = os.path.join(save_dir, "weighted_patch_pred_scores_" + str(folds[ckpt_idx]))
          os.makedirs(save_dir, exist_ok=True)
          
          model = initiate_model(args, ckpt_paths[ckpt_idx])

@@ -184,7 +184,7 @@ CUDA_VISIBLE_DEVICES=0 python weighted_pred_map_fp_mb.py \
         --target_patch_size 256 \
         --fold 0 \
         --norm rescale01 \
-        --score_type weighted_pred_score
+        --score_type weighted_patch_pred_score
 ```
 
 ## External validation

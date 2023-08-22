@@ -57,7 +57,7 @@ parser.add_argument('--norm', type=str, default='percentile-rescale01',
 parser.add_argument('--cm', type=str, default='RdBu_r', help='colormap to apply')
 parser.add_argument('--brs', type=int, nargs='+', default=None, 
                     help='genes / branches to plot')
-parser.add_argument('--score_type', type=str, default='weighted_prob_score', 
+parser.add_argument('--score_type', type=str, default='weighted_patch_pred_score', 
                     help='name of the prediction to use')
 args = parser.parse_args()
 
@@ -102,7 +102,7 @@ if __name__ == "__main__":
                     patch_bags.append(tp_df.iloc[i, 0]+".h5") 
         
         save_dir = args.save_dir
-        save_dir = os.path.join(save_dir, f"weighted_prob_maps_{fold}_{args.downscale}_{args.norm}_{args.cm}")
+        save_dir = os.path.join(save_dir, f"weighted_pred_maps_{fold}_{args.downscale}_{args.norm}_{args.cm}")
         os.makedirs(save_dir, exist_ok=True)
         
         total = len(patch_bags)
@@ -182,10 +182,10 @@ if __name__ == "__main__":
                 snapshot.save(os.path.join(save_dir, patch_bags[i].replace(".h5", "_snapshot.png")))
             
             if args.cpu:
-                att = torch.load(os.path.join(args.save_dir, f"{args.score_type}s_"+str(fold), "patch_pred_score_"+ # weighted_patch_prob_score
+                att = torch.load(os.path.join(args.save_dir, f"{args.score_type}s_{fold}", f"{args.score_type}_"+ # use patch_pred_score_ if to plot patch prediction heatmap
                                               patch_bags[i].replace(".h5", ".pt")), map_location=lambda storage, loc: storage)
             else:
-                att = torch.load(os.path.join(args.save_dir, f"{args.score_type}s_"+str(fold), "patch_pred_score_"+ # weighted_patch_prob_score
+                att = torch.load(os.path.join(args.save_dir, f"{args.score_type}s_{fold}", f"{args.score_type}_"+ # use patch_pred_score_ if to plot patch prediction heatmap
                                               patch_bags[i].replace(".h5", ".pt")), map_location=lambda storage, loc: storage.cuda(0))
 
             print(att.shape)
@@ -222,7 +222,7 @@ if __name__ == "__main__":
                     raise NotImplementedError
                 del(list_att)
                 
-                # for the B highest and B lowest, save the original patch named with the patch prob score and coords
+                # for the B highest and B lowest, save the original patch named with the patch pred score and coords
                 if args.B > 0:
                     patch_dir = os.path.join(args.save_dir, 'repres_patches_weighted_f'+str(fold)+'_br'+str(br))
                     os.makedirs(patch_dir, exist_ok=True)

@@ -1,4 +1,4 @@
-# ABRS-P: deep learning predicts sensitivity to atezolizumab-bevacizumab from digital slides of liver cancer
+# Artificial intelligence based pathology as a biomarker of sensitivity to atezolizumab-bevacizumab in patients with hepatocellular carcinoma: a multicentric, retrospective study
 
 **Abstract**
 
