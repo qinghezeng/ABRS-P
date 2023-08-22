@@ -102,7 +102,7 @@ if __name__ == "__main__":
                     patch_bags.append(tp_df.iloc[i, 0]+".h5") 
         
         save_dir = args.save_dir
-        save_dir = os.path.join(save_dir, f"weighted_pred_maps_{fold}_{args.downscale}_{args.norm}_{args.cm}")
+        save_dir = os.path.join(save_dir, f"weighted_patch_pred_maps_{fold}_{args.downscale}_{args.norm}_{args.cm}")
         os.makedirs(save_dir, exist_ok=True)
         
         total = len(patch_bags)
