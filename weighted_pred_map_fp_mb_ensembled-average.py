@@ -214,7 +214,7 @@ if __name__ == "__main__":
                 df = pd.DataFrame({'pxl_col_in_fullres': f['coords'][:,1], 'pxl_row_in_fullres': f['coords'][:,0]})
 
             assert df.shape[0] == arr_att.shape[0]
-            df['weighted_pred_score'] = list(arr_att/args.k)
+            df['weighted_patch_pred_score'] = list(arr_att/args.k)
             os.makedirs(os.path.join(args.save_dir, f"ensembled-aver_weighted_patch_pred_scores_{args.k}f_{args.norm}"), exist_ok=True)
             df.to_csv(os.path.join(args.save_dir, f"ensembled-aver_weighted_patch_pred_scores_{args.k}f_{args.norm}", f"{os.path.splitext(patch_bags[i])[0]}_{br}.csv"),
                       index=False)
