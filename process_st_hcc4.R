@@ -124,7 +124,7 @@ for (ids in c(1:length(spatial_list))) {
 # *******************************************************************************
 # Differential expression analysis
 # Use script select_topN.py
-score_type <- "weighted_pred" # weighted_pred 
+score_type <- "weighted_patch_pred" # patch_pred
 norm <- 'rescale01'
 n_patch <- 100
 res_folder_1 <- "PATH_CLAM/eval_results_tcga-349_tumor_masked_multi-output_regression_patch/EVAL_mo-reg_visium-integrate_st_hcc_tumor-masked_ctranspath-tcga-paip_4_ABRS-score_exp_cv_00X_CLAM-MB-softplus-patch_50_s1_cv/ensembled-aver_"
