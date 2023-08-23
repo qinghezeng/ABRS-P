@@ -3,8 +3,8 @@
 """
 Created on Tue Feb 28 23:16:15 2023
 
-Weighted pred map for regression
-modified on attention_score_reg which input the features and output the raw attention scores
+Output raw pred scores and raw weighted pred scores for regression
+modified on attention_score_reg.py which inputs the features and outputs the raw attention scores
 
 @author: Q Zeng
 """

@@ -53,7 +53,7 @@ parser.add_argument('--slide_ext', nargs="+", default= ['.svs', '.ndpi', '.tiff'
 # for visium data
 parser.add_argument('--heatmap_crop_size', type=int, default=-1, help='size to central crop patches for heatmap')
 parser.add_argument('--norm', type=str, default='percentile-rescale01', 
-                    help='how to normalize att scores for better heatmap')
+                    help='how to normalize pred scores for better heatmap')
 parser.add_argument('--cm', type=str, default='RdBu_r', help='colormap to apply')
 parser.add_argument('--brs', type=int, nargs='+', default=None, 
                     help='genes / branches to plot')
@@ -182,45 +182,45 @@ if __name__ == "__main__":
                 snapshot.save(os.path.join(save_dir, patch_bags[i].replace(".h5", "_snapshot.png")))
             
             if args.cpu:
-                att = torch.load(os.path.join(args.save_dir, f"{args.score_type}s_{fold}", f"{args.score_type}_"+ # use patch_pred_score_ if to plot patch prediction heatmap
+                pred = torch.load(os.path.join(args.save_dir, f"{args.score_type}s_{fold}", f"{args.score_type}_"+ # use patch_pred_score_ if to plot patch prediction heatmap
                                               patch_bags[i].replace(".h5", ".pt")), map_location=lambda storage, loc: storage)
             else:
-                att = torch.load(os.path.join(args.save_dir, f"{args.score_type}s_{fold}", f"{args.score_type}_"+ # use patch_pred_score_ if to plot patch prediction heatmap
+                pred = torch.load(os.path.join(args.save_dir, f"{args.score_type}s_{fold}", f"{args.score_type}_"+ # use patch_pred_score_ if to plot patch prediction heatmap
                                               patch_bags[i].replace(".h5", ".pt")), map_location=lambda storage, loc: storage.cuda(0))
 
-            print(att.shape)
+            # print(pred.shape)
             
             if args.brs is not None:
                 brs = args.brs
             else:
-                brs = range(att.size()[0])
+                brs = range(pred.size()[0])
                 
             for br in brs:
-                list_att = att.data.tolist()[br]
+                list_pred = pred.data.tolist()[br]
                 
                 if args.norm == 'percentile-rescale01': # CLAM
                     percentile = []
-                    for j in range(len(list_att)):
-                        percentile.append(stats.percentileofscore(list_att, list_att[j])) # the rank in ascending order
+                    for j in range(len(list_pred)):
+                        percentile.append(stats.percentileofscore(list_pred, list_pred[j])) # the rank in ascending order
                     print(len(percentile))
                     
                     nor = [(x - min(percentile)) / (max(percentile) - min(percentile)) for x in percentile] # scale to [0, 1], 1 is the most attended
                     del(percentile)
                 elif args.norm == 'softmax-rescale01': # Ilse18a
-                    arr_att = np.array(list_att)
+                    arr_pred = np.array(list_pred)
                     from scipy.special import softmax
-                    arr_att[~np.isnan(list_att)] = softmax(arr_att[~np.isnan(list_att)])
-                    list_att = list(arr_att)
-                    del(arr_att)
-                    nor = [(x - min(list_att)) / (max(list_att) - min(list_att)) for x in list_att]
+                    arr_pred[~np.isnan(list_pred)] = softmax(arr_pred[~np.isnan(list_pred)])
+                    list_pred = list(arr_pred)
+                    del(arr_pred)
+                    nor = [(x - min(list_pred)) / (max(list_pred) - min(list_pred)) for x in list_pred]
                 elif args.norm == 'submin1-log2-rescale01':
-                    list_att = [np.log2(x - min(list_att) +1) for x in list_att]
-                    nor = [(x - min(list_att)) / (max(list_att) - min(list_att)) for x in list_att]
+                    list_pred = [np.log2(x - min(list_pred) +1) for x in list_pred]
+                    nor = [(x - min(list_pred)) / (max(list_pred) - min(list_pred)) for x in list_pred]
                 elif args.norm == 'rescale01':
-                    nor = [(x - min(list_att)) / (max(list_att) - min(list_att)) for x in list_att]
+                    nor = [(x - min(list_pred)) / (max(list_pred) - min(list_pred)) for x in list_pred]
                 else:
                     raise NotImplementedError
-                del(list_att)
+                del(list_pred)
                 
                 # for the B highest and B lowest, save the original patch named with the patch pred score and coords
                 if args.B > 0:

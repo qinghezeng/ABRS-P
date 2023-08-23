@@ -57,7 +57,7 @@ parser.add_argument('--heatmap_crop_size', type=int, default=-1, help='size to c
 parser.add_argument('--spot_coords_dir',  type = str, default=None,
                     help='directory of spot coordinate file (.csv)')
 parser.add_argument('--norm', type=str, default='percentile-rescale01', 
-                    help='how to normalize att scores for better heatmap')
+                    help='how to normalize pred scores for better heatmap')
 parser.add_argument('--brs', type=int, nargs='+', default=None, 
                     help='genes / branches to plot')
 parser.add_argument('--N_highlight', type=int, default=-1, help='only the top N and low N tiles highlighted  (default: -1, plot all)')
@@ -165,60 +165,60 @@ if __name__ == "__main__":
             snapshot.save(os.path.join(save_dir, patch_bags[i].replace(".h5", "_snapshot.png")))
             
         if args.cpu:
-            att = torch.load(os.path.join(args.save_dir, "weighted_patch_pred_scores_"+str(folds[0]), "weighted_patch_pred_score_"+ # use patch_pred_score_ if to plot patch prediction heatmap
+            pred = torch.load(os.path.join(args.save_dir, "weighted_patch_pred_scores_"+str(folds[0]), "weighted_patch_pred_score_"+ # use patch_pred_score_ if to plot patch prediction heatmap
                                           patch_bags[i].replace(".h5", ".pt")), map_location=lambda storage, loc: storage)
         else:
-            att = torch.load(os.path.join(args.save_dir, "weighted_patch_pred_scores_"+str(folds[0]), "weighted_patch_pred_score_"+ # use patch_pred_score_ if to plot patch prediction heatmap
+            pred = torch.load(os.path.join(args.save_dir, "weighted_patch_pred_scores_"+str(folds[0]), "weighted_patch_pred_score_"+ # use patch_pred_score_ if to plot patch prediction heatmap
                                           patch_bags[i].replace(".h5", ".pt")), map_location=lambda storage, loc: storage.cuda(0))
         
         if args.brs is not None:
             brs = args.brs
         else:
-            brs = range(att.size()[0])
+            brs = range(pred.size()[0])
             
         for br in brs:
-            arr_att = np.zeros(att.size()[1]) # N patches
-            del(att)
+            arr_pred = np.zeros(pred.size()[1]) # N patches
+            del(pred)
             for fold in folds:
                 if args.cpu:
-                    att = torch.load(os.path.join(args.save_dir, "weighted_patch_pred_scores_"+str(fold), "weighted_patch_pred_score_"+ # use patch_pred_score_ if to plot patch prediction heatmap
+                    pred = torch.load(os.path.join(args.save_dir, "weighted_patch_pred_scores_"+str(fold), "weighted_patch_pred_score_"+ # use patch_pred_score_ if to plot patch prediction heatmap
                                                   patch_bags[i].replace(".h5", ".pt")), map_location=lambda storage, loc: storage)
                 else:
-                    att = torch.load(os.path.join(args.save_dir, "weighted_patch_pred_scores_"+str(fold), "weighted_patch_pred_score_"+ # use patch_pred_score_ if to plot patch prediction heatmap
+                    pred = torch.load(os.path.join(args.save_dir, "weighted_patch_pred_scores_"+str(fold), "weighted_patch_pred_score_"+ # use patch_pred_score_ if to plot patch prediction heatmap
                                                   patch_bags[i].replace(".h5", ".pt")), map_location=lambda storage, loc: storage.cuda(0))
             
-                list_att = att.data.tolist()[br]
+                list_pred = pred.data.tolist()[br]
                 
                 if args.norm == 'percentile-rescale01': # CLAM
                     percentile = []
-                    for j in range(len(list_att)):
-                        percentile.append(stats.percentileofscore(list_att, list_att[j])) # the rank in ascending order
-                    del(list_att)
-                    list_att = percentile
+                    for j in range(len(list_pred)):
+                        percentile.append(stats.percentileofscore(list_pred, list_pred[j])) # the rank in ascending order
+                    del(list_pred)
+                    list_pred = percentile
                     del(percentile)
                 elif args.norm == 'softmax-rescale01': # Ilse18a
                     from scipy.special import softmax
-                    list_att = softmax(list_att)  # softmax over N
+                    list_pred = softmax(list_pred)  # softmax over N
                 elif args.norm == 'submin1-log2-rescale01':
-                    list_att = [np.log2(x - min(list_att) +1) for x in list_att]
+                    list_pred = [np.log2(x - min(list_pred) +1) for x in list_pred]
                 elif args.norm == 'rescale01':
-                    list_att = [(x - min(list_att)) / (max(list_att) - min(list_att)) for x in list_att]
+                    list_pred = [(x - min(list_pred)) / (max(list_pred) - min(list_pred)) for x in list_pred]
                 else:
                     raise NotImplementedError
-                arr_att += np.asarray(list_att)
-                del(list_att)
+                arr_pred += np.asarray(list_pred)
+                del(list_pred)
 
             if args.spot_coords_dir is not None:
                 df = pd.read_csv(os.path.join(args.spot_coords_dir, patch_bags[i].replace('h5', 'csv')))
             else:
                 df = pd.DataFrame({'pxl_col_in_fullres': f['coords'][:,1], 'pxl_row_in_fullres': f['coords'][:,0]})
 
-            assert df.shape[0] == arr_att.shape[0]
-            df['weighted_patch_pred_score'] = list(arr_att/args.k)
+            assert df.shape[0] == arr_pred.shape[0]
+            df['weighted_patch_pred_score'] = list(arr_pred/args.k)
             os.makedirs(os.path.join(args.save_dir, f"ensembled-aver_weighted_patch_pred_scores_{args.k}f_{args.norm}"), exist_ok=True)
             df.to_csv(os.path.join(args.save_dir, f"ensembled-aver_weighted_patch_pred_scores_{args.k}f_{args.norm}", f"{os.path.splitext(patch_bags[i])[0]}_{br}.csv"),
                       index=False)
-            nor = [(x - np.min(arr_att)) / (np.max(arr_att) - np.min(arr_att)) for x in arr_att]
+            nor = [(x - np.min(arr_pred)) / (np.max(arr_pred) - np.min(arr_pred)) for x in arr_pred]
                 
             # for the B highest and B lowest, save the original patch named with the weighted pred score and coords
             if args.B > 0:
