@@ -145,12 +145,12 @@ python eval_reg_ensembled-average.py \
         --save_exp_code mo-reg_tcga_hcc_tumor-masked_ctranspath-tcga-paip_349_ABRS-score_exp_cv_00X_CLAM-MB-softplus-patch_50_s1_cv
 ```
 
-***Attention-weighted patch prediction scores***
+***Patch prediction scores***
 
 (taking fold 0 as an example)
 
 ```bash
-python weighted_pred_score_reg.py \
+python pred_score_reg.py \
         --drop_out \
         --results_dir ./results/training_multi-output_regression_patch \
         --models_exp_code mo-reg_tcga_hcc_tumor-masked_ctranspath-tcga-paip_349_ABRS-score_exp_cv_622_CLAM-MB-softplus-patch_50_s1 \
@@ -164,12 +164,12 @@ python weighted_pred_score_reg.py \
         --model_activation softplus
 ```
 
-***Attention-weighted patch prediction heatmaps***
+***Patch prediction heatmaps***
 
 (taking fold 0 as an example)
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python weighted_pred_map_fp_mb.py \
+CUDA_VISIBLE_DEVICES=0 python pred_map_fp_mb.py \
         --eval_dir ./eval_results_tcga-349_tumor_masked_multi-output_regression_patch \
         --save_exp_code mo-reg_tcga_hcc_tumor-masked_ctranspath-tcga-paip_349_ABRS-score_exp_cv_622_CLAM-MB-softplus-patch_50_s1_cv \
         --k 10 \
@@ -184,7 +184,7 @@ CUDA_VISIBLE_DEVICES=0 python weighted_pred_map_fp_mb.py \
         --target_patch_size 256 \
         --fold 0 \
         --norm rescale01 \
-        --score_type weighted_patch_pred_score
+        --score_type patch_pred
 ```
 
 ## External validation
@@ -223,7 +223,7 @@ python eval_reg_ensembled-average.py \
         --eval_dir ./eval_results_tcga-349_tumor_masked_multi-output_regression_patch \
         --save_exp_code mo-reg_mondorS2_hcc_tumor-masked_ctranspath-tcga-paip_225_ABRS-score_exp_cv_00X_CLAM-MB-softplus-patch_50_s1_cv
 
-CUDA_VISIBLE_DEVICES=0 python weighted_pred_score_reg.py \
+CUDA_VISIBLE_DEVICES=0 python pred_score_reg.py \
         --drop_out \
         --k 10 \
         --results_dir ./results/training_multi-output_regression_patch \
@@ -237,7 +237,7 @@ CUDA_VISIBLE_DEVICES=0 python weighted_pred_score_reg.py \
         --model_activation softplus \
         --data_dir ./results/features_ctranspath-tcga-paip_mondorS2_tumor_masked
 
-CUDA_VISIBLE_DEVICES=0 python weighted_pred_map_fp_mb_ensembled-average.py \
+CUDA_VISIBLE_DEVICES=0 python pred_map_fp_mb_ensembled-average.py \
         --eval_dir ./eval_results_tcga-349_tumor_masked_multi-output_regression_patch \
         --save_exp_code mo-reg_mondorS2_hcc_tumor-masked_ctranspath-tcga-paip_225_ABRS-score_exp_cv_00X_CLAM-MB-softplus-patch_50_s1_cv \
         --k 10 \
@@ -250,6 +250,7 @@ CUDA_VISIBLE_DEVICES=0 python weighted_pred_map_fp_mb_ensembled-average.py \
         --target_patch_size 256 \
         --data_slide_dir DIR_RESECTION_WSI \
         --B 8 \
+        --score_type patch_pred \
         --norm rescale01
 ```
 
@@ -276,7 +277,7 @@ python eval_reg_ensembled-average.py \
         --eval_dir ./eval_results_tcga-349_tumor_masked_multi-output_regression_patch \
         --save_exp_code mo-reg_mondor-biopsy_hcc_tumor-masked_ctranspath-tcga-paip_157_ABRS-score_exp_cv_00X_CLAM-MB-softplus-patch_50_s1_cv
 
-CUDA_VISIBLE_DEVICES=0 python weighted_pred_score_reg.py \
+CUDA_VISIBLE_DEVICES=0 python pred_score_reg.py \
         --drop_out \
         --k 10 \
         --results_dir ./results/training_multi-output_regression_patch \
@@ -290,7 +291,7 @@ CUDA_VISIBLE_DEVICES=0 python weighted_pred_score_reg.py \
         --model_activation softplus \
         --data_dir ./results/features_ctranspath-tcga-paip_tagseq-biopsy_tumor_masked
 
-CUDA_VISIBLE_DEVICES=0 python weighted_pred_map_fp_mb_ensembled-average.py \
+CUDA_VISIBLE_DEVICES=0 python pred_map_fp_mb_ensembled-average.py \
         --eval_dir ./eval_results_tcga-349_tumor_masked_multi-output_regression_patch \
         --save_exp_code mo-reg_mondor-biopsy_hcc_tumor-masked_ctranspath-tcga-paip_157_ABRS-score_exp_cv_00X_CLAM-MB-softplus-patch_50_s1_cv \
         --k 10 \
@@ -303,6 +304,7 @@ CUDA_VISIBLE_DEVICES=0 python weighted_pred_map_fp_mb_ensembled-average.py \
         --target_patch_size 256 \
         --data_slide_dir DIR_BIOPSY_WSI \
         --B 8 \
+        --score_type patch_pred \
         --norm rescale01
 ```
 
@@ -326,29 +328,6 @@ CUDA_VISIBLE_DEVICES=0 python eval_reg.py \
         --model_type clam_mb_reg \
         --model_size small-768 \
         --model_activation softplus  \
-        --patch_pred
-```
-
-Use maj-voting_with_thresholds.py to generate majority-voting predictions from the 10 folds (with biopsy-157 thresholds from calculate_median_reg.ipynb)
-
-***Other drugs treated biopsy samples***
-```bash
-# dataset_csv/other-systemic-treatments_hcc_49_ABRS-score_Exp.csv was created with pseudo values
-python create_splits_seq.py --task mo-reg_other-systemic-treatments_hcc_49_ABRS-score_cv_00X --seed 1 --label_frac 1 --k 10
-
-CUDA_VISIBLE_DEVICES=0 python eval_reg.py \
-        --drop_out \
-        --k 10 \
-        --data_dir ./results/features_ctranspath-tcga-paip_other-systemic-treatments_tumor_masked \
-        --splits_dir ./splits/mo-reg_other-systemic-treatments_hcc_49_ABRS-score_cv_00X_100 \
-        --results_dir ./results/training_multi-output_regression_patch \
-        --models_exp_code mo-reg_tcga_hcc_tumor-masked_ctranspath-tcga-paip_349_ABRS-score_exp_cv_622_CLAM-MB-softplus-patch_50_s1 \
-        --eval_dir ./eval_results_tcga-349_tumor_masked_multi-output_regression_patch \
-        --save_exp_code mo-reg_other-systemic-treatments_hcc_tumor-masked_ctranspath-tcga-paip_49_ABRS-score_exp_cv_00X_CLAM-MB-softplus-patch_50_s1_cv \
-        --task mo-reg_other-systemic-treatments_hcc_49_ABRS-score_cv_00X \
-        --model_type clam_mb_reg \
-        --model_size small-768 \
-        --model_activation softplus \
         --patch_pred
 ```
 
@@ -411,8 +390,8 @@ $ python create_splits_seq.py --task mo-reg_st_hcc_4_ABRS-score_cv_00X --seed 1 
 ***- Patch prediction***
 
 ```bash
-# Generate attention-weighted patch predictions for 10 folds
-$ CUDA_VISIBLE_DEVICES=0 python weighted_pred_score_reg.py \
+# Generate patch predictions for 10 folds
+$ CUDA_VISIBLE_DEVICES=0 python pred_score_reg.py \
         --drop_out \
         --k 10 \
         --results_dir ./results/training_multi-output_regression_patch \
@@ -428,7 +407,7 @@ $ CUDA_VISIBLE_DEVICES=0 python weighted_pred_score_reg.py \
         --feature_bags D2_rot90.pt E4_rot90.pt E6_rot90.pt E7_rot90.pt
 
 # Plot the average prediction maps
-$ CUDA_VISIBLE_DEVICES=0 python weighted_pred_map_fp_mb_ensembled-average.py \
+$ CUDA_VISIBLE_DEVICES=0 python pred_map_fp_mb_ensembled-average.py \
         --eval_dir ./eval_results_tcga-349_tumor_masked_multi-output_regression_patch \
         --save_exp_code mo-reg_st_hcc_ctranspath-tcga-paip_4_ABRS-score_exp_cv_00X_CLAM-MB-softplus_50_s1_cv \
         --k 10 \
@@ -444,6 +423,7 @@ $ CUDA_VISIBLE_DEVICES=0 python weighted_pred_map_fp_mb_ensembled-average.py \
         --heatmap_crop_size 218 \
         --patch_bags D2_rot90.h5 E4_rot90.h5 E6_rot90.h5 E7_rot90.h5 \
         --spot_coords_dir DIR_SPOT_COORDS \
+        --score_type patch_pred \
         --norm rescale01
 ```
 
