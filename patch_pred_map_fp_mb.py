@@ -23,7 +23,7 @@ import math
 import pandas as pd
 import openslide
 
-parser = argparse.ArgumentParser(description='CLAM patch Pred Map Script for mb')
+parser = argparse.ArgumentParser(description='CLAM Patch Pred Map Script for mb')
 parser.add_argument('--data_root_dir', type=str, default=None,
                     help='data directory')
 parser.add_argument('--eval_dir', type=str, default='./eval_results',

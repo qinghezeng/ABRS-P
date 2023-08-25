@@ -26,7 +26,7 @@ import math
 import pandas as pd
 import openslide
 
-parser = argparse.ArgumentParser(description='CLAM Ensembled-Aver Pred Map Script')
+parser = argparse.ArgumentParser(description='CLAM Ensembled-Aver Patch Pred Map Script')
 parser.add_argument('--data_root_dir', type=str, default=None,
                     help='data directory')
 parser.add_argument('--eval_dir', type=str, default='./eval_results',
