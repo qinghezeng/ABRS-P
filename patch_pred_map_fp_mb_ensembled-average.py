@@ -167,10 +167,10 @@ if __name__ == "__main__":
             snapshot.save(os.path.join(save_dir, patch_bags[i].replace(".h5", "_snapshot.png")))
             
         if args.cpu:
-            pred = torch.load(os.path.join(args.save_dir, f"{args.score_type}_scores_{folds[0]}", f"{args.score_type}_score_"+ # use patch_pred_score_ if to plot patch prediction heatmap
+            pred = torch.load(os.path.join(args.save_dir, f"patch_pred_scores_{folds[0]}", f"{args.score_type}_score_"+ # use patch_pred_score_ if to plot patch prediction heatmap
                                           patch_bags[i].replace(".h5", ".pt")), map_location=lambda storage, loc: storage)
         else:
-            pred = torch.load(os.path.join(args.save_dir, f"{args.score_type}_scores_{folds[0]}", f"{args.score_type}_score_"+ # use patch_pred_score_ if to plot patch prediction heatmap
+            pred = torch.load(os.path.join(args.save_dir, f"patch_pred_scores_{folds[0]}", f"{args.score_type}_score_"+ # use patch_pred_score_ if to plot patch prediction heatmap
                                           patch_bags[i].replace(".h5", ".pt")), map_location=lambda storage, loc: storage.cuda(0))
         
         if args.brs is not None:
@@ -183,10 +183,10 @@ if __name__ == "__main__":
             del(pred)
             for fold in folds:
                 if args.cpu:
-                    pred = torch.load(os.path.join(args.save_dir, f"{args.score_type}_scores_{fold}", f"{args.score_type}_score_"+ # use patch_pred_score_ if to plot patch prediction heatmap
+                    pred = torch.load(os.path.join(args.save_dir, f"patch_pred_scores_{fold}", f"{args.score_type}_score_"+ # use patch_pred_score_ if to plot patch prediction heatmap
                                                   patch_bags[i].replace(".h5", ".pt")), map_location=lambda storage, loc: storage)
                 else:
-                    pred = torch.load(os.path.join(args.save_dir, f"{args.score_type}_scores_{fold}", f"{args.score_type}_score_"+ # use patch_pred_score_ if to plot patch prediction heatmap
+                    pred = torch.load(os.path.join(args.save_dir, f"patch_pred_scores_{fold}", f"{args.score_type}_score_"+ # use patch_pred_score_ if to plot patch prediction heatmap
                                                   patch_bags[i].replace(".h5", ".pt")), map_location=lambda storage, loc: storage.cuda(0))
             
                 list_pred = pred.data.tolist()[br]
